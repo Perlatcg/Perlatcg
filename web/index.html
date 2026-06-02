@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda TCG — Cartas y Accesorios</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    .nav-logo img { height: 36px; vertical-align: middle; }
+  </style>
+  <style>
+    :root {
+      --bg-primary: #0d0d0d;
+      --bg-secondary: #111118;
+      --bg-card: #1a1a2e;
+      --bg-card-hover: #22223a;
+      --accent: #f5c518;
+      --accent-hover: #e6b800;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b0;
+      --border: #2a2a3e;
+      --pokemon: #ffcb05;
+      --magic: #1a6b9a;
+      --yugioh: #6b21a8;
+      --onepiece: #dc2626;
+      --accesorio: #16a34a;
+      --radius: 12px;
+      --transition: 0.2s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+      border-bottom: 1px solid #e0e0e0;
+      padding: 0 1.5rem; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: border-color var(--transition);
+    }
+    .nav-logo { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--accent); text-decoration: none; letter-spacing: 1px; }
+    .nav-logo span { color: var(--text-primary); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: #444; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color var(--transition); }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { background: var(--accent); color: #000 !important; padding: 0.45rem 1.1rem; border-radius: 6px; font-weight: 600 !important; }
+    .nav-cta:hover { background: var(--accent-hover) !important; }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 6rem 1.5rem 4rem;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,197,24,0.08) 0%, transparent 70%), var(--bg-primary);
+      position: relative; overflow: hidden;
+    }
+    .hero-bg-cards {
+      position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
+      background-image: repeating-linear-gradient(45deg, var(--accent) 0, var(--accent) 1px, transparent 0, transparent 50%);
+      background-size: 40px 40px;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 720px; }
+    .hero-badge {
+      display: inline-block; background: rgba(245,197,24,0.12); border: 1px solid rgba(245,197,24,0.3);
+      color: var(--accent); font-size: 0.78rem; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 100px; margin-bottom: 1.5rem;
+    }
+    .hero-title { font-family: 'Rajdhani', sans-serif; font-size: clamp(3rem,8vw,5.5rem); font-weight: 700; line-height: 1; margin-bottom: 1.25rem; }
+    .hero-title .gold { color: var(--accent); }
+    .hero-subtitle { font-size: clamp(1rem,2.5vw,1.25rem); color: var(--text-secondary); max-width: 520px; margin: 0 auto 2.5rem; }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.75rem; border-radius: 8px; font-weight: 600;
+      font-size: 0.95rem; text-decoration: none; transition: all var(--transition);
+      cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,197,24,0.25); }
+    .btn-outline { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .hero-games { display: flex; gap: 1.5rem; justify-content: center; margin-top: 3.5rem; flex-wrap: wrap; }
+    .game-chip {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);
+    }
+    .game-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* SECTIONS */
+    section { padding: 5rem 1.5rem; }
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-tag { display: inline-block; color: var(--accent); font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .section-title { font-family: 'Rajdhani', sans-serif; font-size: clamp(2rem,4vw,2.75rem); font-weight: 700; }
+    .section-desc { color: var(--text-secondary); max-width: 520px; margin: 0.75rem auto 0; }
+
+    /* CATÁLOGO */
+    #catalogo { background: var(--bg-secondary); }
+    .filters { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .filter-btn {
+      padding: 0.45rem 1.1rem; border-radius: 100px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: all var(--transition); font-family: 'Inter', sans-serif;
+    }
+    .filter-btn:hover, .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 1.25rem; max-width: 1100px; margin: 0 auto; }
+    .product-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all var(--transition); }
+    .product-card:hover { transform: translateY(-4px); border-color: rgba(245,197,24,0.3); box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
+    .product-img { height: 160px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; position: relative; }
+    .product-badge {
+      position: absolute; top: 10px; left: 10px;
+      padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .badge-pokemon  { background: var(--pokemon);  color: #000; }
+    .badge-magic    { background: var(--magic);     color: #fff; }
+    .badge-yugioh   { background: var(--yugioh);    color: #fff; }
+    .badge-onepiece { background: var(--onepiece);  color: #fff; }
+    .badge-accesorio{ background: var(--accesorio); color: #fff; }
+    .product-info { padding: 1rem; }
+    .product-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.3rem; }
+    .product-desc { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.4; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+    .product-price span { font-size: 0.75rem; color: var(--text-secondary); font-family: 'Inter', sans-serif; font-weight: 400; }
+    .product-actions { display: flex; gap: 0.4rem; }
+    .btn-comprar {
+      background: var(--accent); color: #000; border: none; border-radius: 6px;
+      padding: 0.4rem 0.9rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+      transition: all var(--transition); font-family: 'Inter', sans-serif; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .btn-comprar:hover { background: var(--accent-hover); transform: scale(1.04); }
+    .btn-comprar:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-wa {
+      background: #25d366; color: #fff; border: none; border-radius: 6px;
+      padding: 0.4rem 0.7rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+      transition: all var(--transition); font-family: 'Inter', sans-serif; text-decoration: none;
+      display: inline-flex; align-items: center;
+    }
+    .btn-wa:hover { background: #1ebe5d; transform: scale(1.04); }
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #1a1a2e; color: #fff; padding: 0.6rem 1.2rem; border-radius: 8px;
+      font-size: 0.85rem; opacity: 0; transition: all 0.3s; z-index: 300; pointer-events: none;
+      border: 1px solid var(--border);
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .no-results { text-align: center; color: var(--text-secondary); padding: 3rem; grid-column: 1/-1; }
+
+    /* NOSOTROS */
+    #nosotros { background: var(--bg-primary); }
+    .nosotros-inner { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .nosotros-text p { color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.75; }
+    .valores { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .valor-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; transition: border-color var(--transition); }
+    .valor-card:hover { border-color: rgba(245,197,24,0.3); }
+    .valor-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .valor-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .valor-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+
+    /* CONTACTO */
+    #contacto { background: var(--bg-secondary); text-align: center; }
+    .contacto-inner { max-width: 560px; margin: 0 auto; }
+    .contacto-inner p { color: var(--text-secondary); margin-bottom: 2rem; }
+    .contact-options { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .contact-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem 2rem; text-decoration: none; color: var(--text-primary);
+      transition: all var(--transition); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; min-width: 160px;
+    }
+    .contact-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .contact-card .icon { font-size: 2rem; }
+    .contact-card .label { font-weight: 600; font-size: 0.9rem; }
+    .contact-card .sub { font-size: 0.78rem; color: var(--text-secondary); }
+    .redes { display: flex; gap: 1rem; justify-content: center; }
+    .red-link { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color var(--transition); display: flex; align-items: center; gap: 0.4rem; }
+    .red-link:hover { color: var(--accent); }
+
+    /* FOOTER */
+    footer { background: #080808; border-top: 1px solid var(--border); padding: 2rem 1.5rem; text-align: center; }
+    .footer-logo { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; }
+    .footer-logo span { color: var(--text-primary); }
+    footer p { color: var(--text-secondary); font-size: 0.82rem; }
+
+    /* WHATSAPP FAB */
+    .wa-fab {
+      position: fixed; bottom: 1.75rem; right: 1.75rem; z-index: 200;
+      background: #25d366; color: #fff; width: 58px; height: 58px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(37,211,102,0.4); transition: all var(--transition); text-decoration: none;
+    }
+    .wa-fab:hover { transform: scale(1.1); box-shadow: 0 6px 24px rgba(37,211,102,0.55); }
+    .wa-fab svg { width: 30px; height: 30px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nosotros-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-games { gap: 0.75rem; }
+    }
+    @media (max-width: 480px) {
+      .valores { grid-template-columns: 1fr; }
+      .products-grid { grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#hero" class="nav-logo"><img src="https://dcdn-us.mitiendanube.com/stores/007/389/032/themes/common/logo-8597940368063173836-1779221683-424b02f80e48ef79b88f22b5c958a5781779221683-640-0.webp" alt="Perla TCG" onerror="this.style.display='none';this.nextSibling.style.display='inline'"><span style="display:none">Perla<span style="color:var(--text-primary)">TCG</span></span></a>
+    <ul class="nav-links">
+      <li><a href="#catalogo">Catálogo</a></li>
+      <li><a href="#nosotros">Nosotros</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+      <li><a href="https://wa.me/5492236768472?text=Hola!%20Quiero%20consultar%20sobre%20productos%20de%20Tienda%20TCG" target="_blank" class="nav-cta">WhatsApp</a></li>
+    </ul>
+  </nav>
+
+  <section id="hero">
+    <div class="hero-bg-cards"></div>
+    <div class="hero-content">
+      <div class="hero-badge">✦ Cartas &amp; Accesorios TCG</div>
+      <h1 class="hero-title">Tu tienda de<br/><span class="gold">cartas coleccionables</span></h1>
+      <p class="hero-subtitle">Pokémon, Magic: The Gathering, Yu-Gi-Oh!, One Piece TCG y todos los accesorios que necesitás para jugar al máximo.</p>
+      <div class="hero-buttons">
+        <a href="#catalogo" class="btn btn-primary">Ver catálogo →</a>
+        <a href="https://wa.me/5492236768472?text=Hola!%20Quiero%20consultar%20sobre%20productos%20de%20Tienda%20TCG" target="_blank" class="btn btn-outline">💬 Escribinos</a>
+      </div>
+      <div class="hero-games">
+        <div class="game-chip"><div class="dot" style="background:var(--pokemon)"></div>Pokémon</div>
+        <div class="game-chip"><div class="dot" style="background:var(--magic)"></div>Magic</div>
+        <div class="game-chip"><div class="dot" style="background:var(--yugioh)"></div>Yu-Gi-Oh!</div>
+        <div class="game-chip"><div class="dot" style="background:var(--onepiece)"></div>One Piece</div>
+        <div class="game-chip"><div class="dot" style="background:var(--accesorio)"></div>Accesorios</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="catalogo">
+    <div class="section-header">
+      <div class="section-tag">Productos</div>
+      <h2 class="section-title">Nuestro Catálogo</h2>
+      <p class="section-desc">Filtrá por juego y encontrá lo que buscás</p>
+    </div>
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="magic">Magic</button>
+      <button class="filter-btn" data-filter="dado">Dados</button>
+      <button class="filter-btn" data-filter="deckbox">Deck Box</button>
+      <button class="filter-btn" data-filter="sleeve">Sleeves</button>
+      <button class="filter-btn" data-filter="binder">Binders</button>
+    </div>
+    <div class="products-grid" id="products-grid"></div>
+  </section>
+
+  <section id="nosotros">
+    <div class="nosotros-inner">
+      <div class="nosotros-text">
+        <div class="section-tag">Quiénes somos</div>
+        <h2 class="section-title" style="text-align:left;margin-bottom:1.5rem">Apasionados por los TCG</h2>
+        <p>Somos jugadores antes que vendedores. Tienda TCG nació de la pasión por las cartas coleccionables y el deseo de que cada jugador, desde el casual hasta el competitivo, tenga acceso a los mejores productos.</p>
+        <p>Trabajamos con stock renovado constantemente, precios justos y atención personalizada por WhatsApp. Si tenés dudas sobre qué mazo armar o qué sobre abrir, estamos para ayudarte.</p>
+        <a href="https://wa.me/5492236768472?text=Hola!%20Tengo%20una%20consulta" target="_blank" class="btn btn-primary" style="margin-top:0.5rem">Consultanos →</a>
+      </div>
+      <div class="valores">
+        <div class="valor-card"><div class="valor-icon">🃏</div><div class="valor-title">Stock real</div><div class="valor-desc">Solo vendemos lo que tenemos en mano</div></div>
+        <div class="valor-card"><div class="valor-icon">⚡</div><div class="valor-title">Envíos rápidos</div><div class="valor-desc">Despachamos el mismo día o el siguiente hábil</div></div>
+        <div class="valor-card"><div class="valor-icon">🏆</div><div class="valor-title">Calidad garantizada</div><div class="valor-desc">Productos 100% originales y sellados</div></div>
+        <div class="valor-card"><div class="valor-icon">💬</div><div class="valor-title">Atención real</div><div class="valor-desc">Te atiende un jugador, no un bot</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contacto">
+    <div class="section-header">
+      <div class="section-tag">Contacto</div>
+      <h2 class="section-title">¿Buscás algo en particular?</h2>
+    </div>
+    <div class="contacto-inner">
+      <p>Escribinos por WhatsApp o seguinos en Instagram para ver novedades, preventa y reposiciones.</p>
+      <div class="contact-options">
+        <a href="https://wa.me/5492236768472?text=Hola!%20Quiero%20consultar%20sobre%20productos%20de%20Tienda%20TCG" target="_blank" class="contact-card">
+          <div class="icon">💬</div><div class="label">WhatsApp</div><div class="sub">Respuesta rápida</div>
+        </a>
+        <a href="https://instagram.com/perlatcg" target="_blank" class="contact-card">
+          <div class="icon">📸</div><div class="label">Instagram</div><div class="sub">@perlatcg</div>
+        </a>
+      </div>
+      <div class="redes">
+        <a href="https://instagram.com/perlatcg" target="_blank" class="red-link">📸 @perlatcg</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast"></div>
+
+  <footer>
+    <div class="footer-logo">Tienda<span>TCG</span></div>
+    <p>© 2025 Tienda TCG — Cartas y Accesorios · Hecho con ♥ para jugadores</p>
+  </footer>
+
+  <a href="https://wa.me/5492236768472?text=Hola!%20Quiero%20consultar%20sobre%20productos%20de%20Tienda%20TCG" target="_blank" class="wa-fab" title="Escribinos por WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <script>
+    const CDN = "https://dcdn-us.mitiendanube.com/stores/007/389/032/products/";
+    const productos = [
+      { id:1,  nombre:"Play Booster Magic x TMNT (Tortugas Ninja)", juego:"magic",   precio:14000,  img:CDN+"sin-titulo-1024-x-1024-px-599c8c25346a5d2b0d17743766249477-640-0.webp",  descripcion:"14 cartas por sobre, set Universes Beyond edición limitada" },
+      { id:2,  nombre:"Bundle Magic x TMNT – Tortugas Ninja",        juego:"magic",   precio:220000, img:CDN+"bundle-1024-px-d677f41d6e2049075b17743793248085-640-0.webp",              descripcion:"9 Play Boosters + tierras exclusivas + dado spindown + caja temática" },
+      { id:3,  nombre:"Set de 7 Dados Poliédricos Premium RPG / D&D", juego:"dado",   precio:33000,  img:CDN+"dados-ojo-de-dragon-ab7654e798aad78dc117780063900380-640-0.webp",         descripcion:"Resina cristalina, diseños únicos, bolsa de regalo incluida" },
+      { id:4,  nombre:"Set 26 Dados: Contadores +1/+1, Habilidades y Vida", juego:"dado", precio:18000, img:CDN+"set-de-24-dados-contadores-y-habilidades-tcg-celeste-violeta-y-negro-81b10edb105eca448c17780091432825-640-0.webp", descripcion:"12 contadores, 12 de habilidades, 2 dados D20 + bolsa de regalo" },
+      { id:5,  nombre:"Set de Dados Premium TCG 12d6 + 2d20 Galaxia", juego:"dado",  precio:11000,  img:CDN+"dados-blanco-y-negro-perlados-737fc55269a133e15217779261655388-640-0.webp",  descripcion:"Acabado nebula translúcido, números dorados alta visibilidad" },
+      { id:6,  nombre:"Deck Box Commander Premium – Visor Lateral",   juego:"deckbox",precio:20000,  img:CDN+"deck-box-commander-cerrada-6db6079cc32e50fc1317777535882997-640-0.webp",   descripcion:"100+ cartas con doble sleeve, visor para tu Comandante, imantada" },
+      { id:7,  nombre:"Double Deck Box Commander – 200 Cartas",       juego:"deckbox",precio:39000,  img:CDN+"deck-box-doble-verde-cerrada-81ea07e4f2d1acbcfa17777537186401-640-0.webp",  descripcion:"2 mazos de 100 cartas, doble visor, cierres de neodimio" },
+      { id:8,  nombre:"Deck Box Premium Imantada – Cuerina 100 Cartas",juego:"deckbox",precio:17600, img:CDN+"deck-box-violeta-abierta-74ecc81a9fa075335e17777514561697-640-0.webp",      descripcion:"Cuerina PU, interior microfibra, cierre magnético, varios colores" },
+      { id:9,  nombre:"Folios Dragon Shield Matte 100u Standard",     juego:"sleeve", precio:25000,  img:CDN+"protectores-sleeve-dragon-shield-c74f744f7b7d1c163817780010149438-640-0.webp", descripcion:"63x88mm, acabado matte, libre de PVC, para Magic/Pokémon/Digimon" },
+      { id:10, nombre:"Carpeta Binder TCG – Cierre y 50 Folios 9 Bolsillos", juego:"binder", precio:45000, img:CDN+"binder-abierto-sin-cartas-cc55dd86e2bef2415117777539873324-640-0.webp", descripcion:"900 cartas, eco-cuero, cierre perimetral reforzado, carga lateral" },
+    ];
+
+    const bgJuego = { magic:'#0a1a25', dado:'#1c1800', deckbox:'#1a0a2e', sleeve:'#0a1a10', binder:'#1a1a00' };
+    const labelJuego = { magic:'Magic', dado:'Dados', deckbox:'Deck Box', sleeve:'Sleeve', binder:'Binder' };
+    const badgeColor = { magic:'badge-magic', dado:'badge-pokemon', deckbox:'badge-yugioh', sleeve:'badge-accesorio', binder:'badge-accesorio' };
+    const WA = "https://wa.me/5492236768472?text=";
+
+    function renderProducts(filter) {
+      const grid = document.getElementById('products-grid');
+      const list = filter === 'all' ? productos : productos.filter(p => p.juego === filter);
+      if (!list.length) { grid.innerHTML = '<div class="no-results">No hay productos en esta categoría aún.</div>'; return; }
+      grid.innerHTML = list.map(p => {
+        const msg = encodeURIComponent(`Hola! Me interesa: ${p.nombre} ($${p.precio.toLocaleString('es-AR')})`);
+        const imgHtml = p.img
+          ? `<img src="${p.img}" alt="${p.nombre}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" loading="lazy" onerror="this.style.display='none'">`
+          : '';
+        return `<div class="product-card">
+          <div class="product-img" style="background:${bgJuego[p.juego]||'#1a1a2e'};position:relative;overflow:hidden">
+            ${imgHtml}
+            <span class="product-badge ${badgeColor[p.juego]||'badge-accesorio'}" style="z-index:1">${labelJuego[p.juego]||p.juego}</span>
+          </div>
+          <div class="product-info">
+            <div class="product-name">${p.nombre}</div>
+            <div class="product-desc">${p.descripcion}</div>
+            <div class="product-footer">
+              <div class="product-price">$${p.precio.toLocaleString('es-AR')} <span>ARS</span></div>
+              <div class="product-actions">
+                <button class="btn-comprar" onclick="comprarMP(this,'${p.nombre.replace(/'/g,"\\'")}',${p.precio})">🛒 Comprar</button>
+                <a href="${WA}${msg}" target="_blank" class="btn-wa" title="Consultar por WhatsApp">💬</a>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderProducts(btn.dataset.filter);
+      });
+    });
+
+    renderProducts('all');
+
+    // MercadoPago Checkout Pro
+    async function comprarMP(btn, nombre, precio) {
+      btn.disabled = true;
+      btn.textContent = '⏳ Procesando...';
+      try {
+        const res = await fetch('/.netlify/functions/create-preference', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, precio, cantidad: 1 }),
+        });
+        const data = await res.json();
+        if (data.init_point) {
+          window.location.href = data.init_point;
+        } else {
+          throw new Error(data.error || 'Error MP');
+        }
+      } catch (err) {
+        showToast('❌ Error al procesar el pago. Intentá por WhatsApp.');
+        btn.disabled = false;
+        btn.innerHTML = '🛒 Comprar';
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('pago') === 'ok') showToast('✅ ¡Pago recibido! Te contactamos a la brevedad.');
+    if (params.get('pago') === 'pendiente') showToast('⏳ Pago pendiente. Te avisamos cuando se confirme.');
+    if (params.get('pago') === 'error') showToast('❌ El pago no se completó. Intentá de nuevo.');
+
+    window.addEventListener('scroll', () => {
+      document.querySelector('nav').style.borderBottomColor = window.scrollY > 20 ? 'rgba(245,197,24,0.15)' : 'var(--border)';
+    });
+  </script>
+</body>
+</html>
